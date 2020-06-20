@@ -8,17 +8,28 @@ import (
 )
 
 type Config struct {
-	Environment   string `config:"environment;default=DEV;options=DEV, HOMO, PROD, UNK;description=Host environment (DEV, HOMO, PROD or UNK)."`
-	Debug         bool   `config:"debug;default=false"`
+	Environment string `config:"environment;default=DEV;options=DEV, HOMO, PROD, UNK;description=Host environment (DEV, HOMO, PROD or UNK)."`
+	Debug       bool   `config:"debug;default=false"`
+
 	MongoHost     string `config:"mongo-host;default=localhost"`
 	MongoPort     string `config:"mongo-port;default=27017"`
 	MongoDatabase string `config:"mongo-database;default=bezunca"`
 	MongoUser     string `config:"mongo-user;default=admin"`
 	MongoPassword string `config:"mongo-password;required"`
+
+	QueueHost       string `config:"queue-host;default=localhost"`
+	QueuePort       string `config:"queue-port;default=27017"`
+	QueueUser       string `config:"queue-user;default=admin"`
+	QueuePassword   string `config:"queue-password;required"`
+	QueueSelfSigned bool   `config:"queue-self-signed;default=0"`
 }
 
 func (c *Config) MongoAddress() string {
 	return strings.Join([]string{c.MongoHost, c.MongoPort}, ":")
+}
+
+func (c *Config) QueueAddress() string {
+	return strings.Join([]string{c.QueueHost, c.QueuePort}, ":")
 }
 
 var globalConfig *Config = nil

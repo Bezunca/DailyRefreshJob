@@ -1,7 +1,7 @@
 package models
 
 type ScrapingCredentials struct {
-	CEI CEI
+	CEI *CEI
 }
 
 type Scraping struct {
