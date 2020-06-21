@@ -3,21 +3,21 @@ package main
 import (
 	"log"
 
-	"go.mongodb.org/mongo-driver/mongo"
-
-	assets_b3 "github.com/Bezunca/DailyRefreshJob/internal/assets/b3"
-
+	b3_assets "github.com/Bezunca/DailyRefreshJob/internal/assets/b3"
 	"github.com/Bezunca/DailyRefreshJob/internal/config"
 	"github.com/Bezunca/DailyRefreshJob/internal/database"
 	"github.com/Bezunca/DailyRefreshJob/internal/queue"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func main() {
+	log.Print("STARTING")
 	config.New()
 
 	// ADD OTHER HISTORICAL ASSETS FUNCTION HERE
-	historicalAssetsToParse := []func(*mongo.Client) error{
-		assets_b3.InsertOldPriceHistory,
+	AssetsToParse := []func(*mongo.Client) error{
+		b3_assets.InsertOldPriceHistory,
+		b3_assets.InsertRecentPrices,
 	}
 
 	mongoClient, err := database.GetConnection()
@@ -25,15 +25,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	for i := 0; i < len(historicalAssetsToParse); i++ {
-		err = historicalAssetsToParse[i](mongoClient)
+	for i := 0; i < len(AssetsToParse); i++ {
+		err = AssetsToParse[i](mongoClient)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
-
-	// TODO: GET CURRENT YEAR PRICES HERE
-	// EXAMPLE URL: http://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_D14062020.ZIP
 
 	users, err := database.GetUsers(mongoClient)
 	if err != nil {
@@ -47,8 +44,10 @@ func main() {
 	defer queueConn.Close()
 	defer queueCh.Close()
 
-	err = assets_b3.SendCEIScrapingRequests(queueCh, users)
+	err = b3_assets.SendCEIScrapingRequests(queueCh, users)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	log.Print("DONE")
 }

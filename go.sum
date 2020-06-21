@@ -1,5 +1,5 @@
-github.com/Bezunca/B3History v0.0.7 h1:pBXUzZKx3TI4sIJHOzY5jZTFWajAUTFlWhW/sQmPjko=
-github.com/Bezunca/B3History v0.0.7/go.mod h1:UkPcHbgg73AOZzqQU1H+hulFT7Vog10EQNA3N2L2uIg=
+github.com/Bezunca/B3History v0.0.9 h1:LJWxB0H+u6I9WYZGwuOB3OFRuPBoEFc495Sie9YIlVE=
+github.com/Bezunca/B3History v0.0.9/go.mod h1:UkPcHbgg73AOZzqQU1H+hulFT7Vog10EQNA3N2L2uIg=
 github.com/Bezunca/ZipInMemory v0.0.5 h1:Ph9pDqjJjR50X8AENMGfRlaQCTxvrKMH7wnbgVpJ3ZA=
 github.com/Bezunca/ZipInMemory v0.0.5/go.mod h1:BLCWq2W2roVK/Z4l3fMz6tkauOzPOHN56Zlpwo9dzxY=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
