@@ -3,16 +3,18 @@ package main
 import (
 	"log"
 
-	b3_assets "github.com/Bezunca/DailyRefreshJob/internal/assets/b3"
 	"github.com/Bezunca/DailyRefreshJob/internal/config"
+
+	"github.com/robfig/cron/v3"
+
+	b3_assets "github.com/Bezunca/DailyRefreshJob/internal/assets/b3"
 	"github.com/Bezunca/DailyRefreshJob/internal/database"
 	"github.com/Bezunca/DailyRefreshJob/internal/queue"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func main() {
+func _main() {
 	log.Print("STARTING")
-	config.New()
 
 	// ADD OTHER HISTORICAL ASSETS FUNCTION HERE
 	AssetsToParse := []func(*mongo.Client) error{
@@ -50,4 +52,20 @@ func main() {
 	}
 
 	log.Print("DONE")
+}
+
+func main() {
+	configs := config.New()
+	if configs.CronEnable {
+		c := cron.New()
+		_, err := c.AddFunc(configs.CronSchedulePattern, func() { _main() })
+		if err != nil {
+			log.Fatal(err)
+		}
+		c.Start()
+		forever := make(chan bool)
+		<-forever
+	} else {
+		_main()
+	}
 }

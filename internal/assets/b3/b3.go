@@ -90,22 +90,25 @@ func InsertRecentPrices(mongoClient *mongo.Client) error {
 	var dataComplement []b3_models.AssetInfo
 	currentDate := time.Now()
 	for i := lastUpdateDate.Add(time.Hour * 24); i.Year() <= currentDate.Year() && i.Month() <= currentDate.Month() && i.Day() <= currentDate.Day(); i = i.Add(time.Hour * 24) {
+		if i.Weekday() == time.Saturday || i.Weekday() == time.Sunday {
+			continue
+		}
+
 		day := fmt.Sprintf("%02d", i.Day())
 		mounth := fmt.Sprintf("%02d", i.Month())
 		year := fmt.Sprintf("%d", i.Year())
-		log.Printf("Scraping data of %s/%s/%s", day, mounth, year)
+		log.Printf("Scraping data %s/%s/%s", day, mounth, year)
 
 		url := fmt.Sprintf("http://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_D%s%s%s.ZIP",
 			day, mounth, year,
 		)
-		zipBytes, err := b3_http.Download(url)
+		zipBytes, err := b3_http.Download(url) // TODO: Technical debt - move to B3 lib
 		if err != nil {
 			return err
 		}
 		zipFile, err := zipMemory.ExtractInMemory(zipBytes)
 		if err != nil {
-			log.Printf("WARN: Cannot find data for %s/%s/%s (error or maybe weekend orholyday)", day, mounth, year)
-			continue
+			return err
 		}
 		dayData, err := b3_parser.ParseHistoricDataFromBytes(zipFile, i.Year())
 		if err != nil {
@@ -113,10 +116,14 @@ func InsertRecentPrices(mongoClient *mongo.Client) error {
 		}
 		dataComplement = append(dataComplement, dayData...)
 	}
-	log.Print("Writing recent prices to database")
-	_, err = pricesCollection.InsertMany(context.Background(), convertPricesToMongoFormat(dataComplement))
-	if err != nil {
-		return err
+	if len(dataComplement) > 0 {
+		log.Print("Writing recent prices to database")
+		_, err = pricesCollection.InsertMany(context.Background(), convertPricesToMongoFormat(dataComplement))
+		if err != nil {
+			return err
+		}
+	} else {
+		log.Print("No new data to write")
 	}
 
 	return nil

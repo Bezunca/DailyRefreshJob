@@ -24,6 +24,9 @@ type Config struct {
 	QueueSelfSigned bool   `config:"queue-self-signed;default=0"`
 
 	InitialB3Year uint `config:"initial-b3-year;default=2015"`
+
+	CronEnable          bool   `config:"cron-enable;default=true"`
+	CronSchedulePattern string `config:"cron-schedule-pattern;default=0 1 * * *"`
 }
 
 func (c *Config) MongoAddress() string {
