@@ -22,6 +22,8 @@ type Config struct {
 	QueueUser       string `config:"queue-user;default=admin"`
 	QueuePassword   string `config:"queue-password;required"`
 	QueueSelfSigned bool   `config:"queue-self-signed;default=0"`
+
+	InitialB3Year uint `config:"initial-b3-year;default=2015"`
 }
 
 func (c *Config) MongoAddress() string {
