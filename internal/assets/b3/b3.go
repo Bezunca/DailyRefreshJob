@@ -89,7 +89,7 @@ func InsertRecentPrices(mongoClient *mongo.Client) error {
 
 	var dataComplement []b3_models.AssetInfo
 	currentDate := time.Now()
-	for i := lastUpdateDate.Add(time.Hour * 24); i.Year() <= currentDate.Year() && i.Month() <= currentDate.Month() && i.Day() <= currentDate.Day(); i = i.Add(time.Hour * 24) {
+	for i := lastUpdateDate.Add(time.Hour * 24); i.Year() <= currentDate.Year() && i.Month() <= currentDate.Month() && i.Day() == currentDate.Day(); i = i.Add(time.Hour * 24) {
 		if i.Weekday() == time.Saturday || i.Weekday() == time.Sunday {
 			continue
 		}
