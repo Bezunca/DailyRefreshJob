@@ -12,7 +12,8 @@ import (
 
 func GetConnection() (*mongo.Client, error) {
 	configs := config.Get()
-	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
 
 	mongoClient, err := mongo.Connect(
 		ctx, options.Client().ApplyURI(

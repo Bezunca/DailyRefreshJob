@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -16,18 +17,25 @@ import (
 
 var userDecodeError = func() { log.Println("WARN: Cant decode data for an user") }
 
-func GetUsers(mongoClient *mongo.Client) ([]models.Scraping, error) {
+func GetUsers(mongoClient *mongo.Client) (users []models.Scraping, err error) {
 	configs := config.Get()
 	usersCollection := mongoClient.Database(configs.MongoDatabase).Collection("users")
 
-	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 	cur, err := usersCollection.Find(ctx, bson.D{}, options.Find().SetProjection(bson.D{{"name", 0}}))
 	if err != nil {
-		return nil, err
+		return
 	}
-	defer cur.Close(ctx)
-
-	var users []models.Scraping
+	defer func() {
+		if e := cur.Close(ctx); e != nil {
+			if err != nil {
+				err = fmt.Errorf("%v: %v", e, err)
+			} else {
+				err = e
+			}
+		}
+	}()
 
 	for cur.Next(ctx) {
 		var data map[string]interface{}
