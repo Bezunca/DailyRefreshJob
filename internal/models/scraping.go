@@ -1,10 +1,10 @@
 package models
 
 type ScrapingCredentials struct {
-	CEI *CEI
+	CEI *CEI `json:"cei"`
 }
 
 type Scraping struct {
-	ID                  []uint8
-	ScrapingCredentials ScrapingCredentials
+	ID                  string              `json:"id"`
+	ScrapingCredentials ScrapingCredentials `json:"scraping_credentials"`
 }

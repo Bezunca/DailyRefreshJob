@@ -1,6 +1,8 @@
 package parsers
 
 import (
+	"encoding/hex"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -17,15 +19,15 @@ func ParseBaseScraping(data map[string]interface{}) (map[string]interface{}, boo
 	return scrapingCredentials, true
 }
 
-func ParseID(data map[string]interface{}) ([]uint8, bool) {
+func ParseID(data map[string]interface{}) (string, bool) {
 	_rawId, ok := data["_id"]
 	if !ok {
-		return nil, false
+		return "", false
 	}
 
 	rawId, ok := _rawId.(primitive.ObjectID)
 	if !ok {
-		return nil, false
+		return "", false
 	}
 
 	id := make([]uint8, len(rawId))
@@ -33,5 +35,8 @@ func ParseID(data map[string]interface{}) ([]uint8, bool) {
 		id[i] = rawId[i]
 	}
 
-	return id, true
+	hexID := make([]byte, hex.EncodedLen(len(id)))
+	hex.Encode(hexID, id)
+
+	return string(hexID), true
 }
