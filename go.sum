@@ -1,5 +1,7 @@
-github.com/Bezunca/b3lib v0.0.2 h1:69VGejFxF83GQ/MCRbOCpe2lWhXTNn4ykrhJs/UjFwg=
-github.com/Bezunca/b3lib v0.0.2/go.mod h1:RN8BWfgwXQSLDmlAZwpIGuTFWbqCBDGgw8mP3n2luTY=
+github.com/Bezunca/b3lib v0.0.3 h1:RnHAB1HAFa+ji9L/lKBermQzIClFgXX4mrjgCDr/9jg=
+github.com/Bezunca/b3lib v0.0.3/go.mod h1:RN8BWfgwXQSLDmlAZwpIGuTFWbqCBDGgw8mP3n2luTY=
+github.com/Bezunca/mongo_connection v0.0.1 h1:jedK4wgicff2R99q1/prW84iyIvP7VFa5YCaSLjdWZg=
+github.com/Bezunca/mongo_connection v0.0.1/go.mod h1:aBlPbF4VMbsFdmHkycQxPnPnAJR0w4SyZvuFWDNM8hA=
 github.com/Bezunca/zip_in_memory v0.0.6 h1:1O1HCDWkgeXXd1FCe2qe7DXDuA7WP6WpB76IxFpqoVA=
 github.com/Bezunca/zip_in_memory v0.0.6/go.mod h1:5PrXceJTQmzaBOMclD/c3x8uV/bJwPLC8uASHdW+r9U=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=

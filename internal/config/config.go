@@ -2,39 +2,30 @@ package config
 
 import (
 	"log"
-	"strings"
+
+	"github.com/Bezunca/mongo_connection/config"
 
 	"github.com/fogodev/openvvar"
 )
 
+type Databases struct {
+	HistoricalPrices string
+}
+
 type Config struct {
 	Environment string `config:"environment;default=DEV;options=DEV, HOMO, PROD, UNK;description=Host environment (DEV, HOMO, PROD or UNK)."`
 	Debug       bool   `config:"debug;default=false"`
+	CAFile      string `config:"ca-file;required"`
 
-	MongoHost     string `config:"mongo-host;default=localhost"`
-	MongoPort     string `config:"mongo-port;default=27017"`
-	MongoDatabase string `config:"mongo-database;default=bezunca"`
-	MongoUser     string `config:"mongo-user;default=admin"`
-	MongoPassword string `config:"mongo-password;required"`
+	MongoDB             config.MongoConfigs
+	ApplicationDatabase string `config:"application-database;required"`
 
-	QueueHost       string `config:"queue-host;default=localhost"`
-	QueuePort       string `config:"queue-port;default=27017"`
-	QueueUser       string `config:"queue-user;default=admin"`
-	QueuePassword   string `config:"queue-password;required"`
-	QueueSelfSigned bool   `config:"queue-self-signed;default=0"`
+	RabbitMQ RabbitMQConfig
 
 	InitialB3Year uint `config:"initial-b3-year;default=2015"`
 
 	CronEnable          bool   `config:"cron-enable;default=true"`
 	CronSchedulePattern string `config:"cron-schedule-pattern;default=0 1 * * *"`
-}
-
-func (c *Config) MongoAddress() string {
-	return strings.Join([]string{c.MongoHost, c.MongoPort}, ":")
-}
-
-func (c *Config) QueueAddress() string {
-	return strings.Join([]string{c.QueueHost, c.QueuePort}, ":")
 }
 
 var globalConfig *Config = nil

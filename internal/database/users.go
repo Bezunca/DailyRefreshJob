@@ -19,11 +19,11 @@ var userDecodeError = func() { log.Println("WARN: Cant decode data for an user")
 
 func GetUsers(mongoClient *mongo.Client) (users []models.Scraping, err error) {
 	configs := config.Get()
-	usersCollection := mongoClient.Database(configs.MongoDatabase).Collection("users")
+	usersCollection := mongoClient.Database(configs.ApplicationDatabase).Collection("users")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	cur, err := usersCollection.Find(ctx, bson.D{}, options.Find().SetProjection(bson.D{{"name", 0}}))
+	cur, err := usersCollection.Find(ctx, bson.D{}, options.Find().SetProjection(bson.D{{Key: "name", Value: 0}}))
 	if err != nil {
 		return
 	}

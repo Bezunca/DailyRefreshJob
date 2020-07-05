@@ -1,15 +1,21 @@
 package main
 
 import (
+	"crypto/tls"
+	"crypto/x509"
+	"io/ioutil"
 	"log"
+
+	"github.com/Bezunca/DailyRefreshJob/internal/database"
+
+	"github.com/Bezunca/mongo_connection"
 
 	"github.com/Bezunca/DailyRefreshJob/internal/config"
 
 	"github.com/robfig/cron/v3"
 
 	b3_assets "github.com/Bezunca/DailyRefreshJob/internal/assets/b3"
-	"github.com/Bezunca/DailyRefreshJob/internal/database"
-	"github.com/Bezunca/DailyRefreshJob/internal/queue"
+	"github.com/Bezunca/DailyRefreshJob/internal/rabbitmq"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -22,10 +28,35 @@ func _main() {
 		b3_assets.InsertRecentPrices,
 	}
 
-	mongoClient, err := database.GetConnection()
+	// Loading configs
+	configs := config.New()
+
+	caChainBytes, err := ioutil.ReadFile(configs.CAFile)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	roots := x509.NewCertPool()
+	ok := roots.AppendCertsFromPEM(caChainBytes)
+	if !ok {
+		log.Fatal("unable to parse CA Chain file")
+	}
+
+	tlsConfig := &tls.Config{
+		RootCAs: roots,
+	}
+
+	rabbitMQ, err := rabbitmq.New(&configs.RabbitMQ, tlsConfig)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	mongoClient, err := mongo_connection.New(&configs.MongoDB, tlsConfig)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer mongo_connection.Close()
+	defer rabbitMQ.Close()
 
 	for i := 0; i < len(AssetsToParse); i++ {
 		err = AssetsToParse[i](mongoClient)
@@ -39,14 +70,7 @@ func _main() {
 		log.Fatal(err)
 	}
 
-	queueConn, queueCh, err := queue.GetConnectionAndChannel()
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer queueConn.Close()
-	defer queueCh.Close()
-
-	err = b3_assets.SendCEIScrapingRequests(queueCh, users)
+	err = b3_assets.SendCEIScrapingRequests(rabbitMQ, users)
 	if err != nil {
 		log.Fatal(err)
 	}

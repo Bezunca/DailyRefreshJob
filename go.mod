@@ -3,7 +3,8 @@ module github.com/Bezunca/DailyRefreshJob
 go 1.14
 
 require (
-	github.com/Bezunca/b3lib v0.0.2
+	github.com/Bezunca/b3lib v0.0.3
+	github.com/Bezunca/mongo_connection v0.0.1
 	github.com/fogodev/openvvar v0.10.0
 	github.com/google/go-cmp v0.4.1 // indirect
 	github.com/robfig/cron/v3 v3.0.0
