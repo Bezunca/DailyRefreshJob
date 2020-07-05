@@ -51,7 +51,7 @@ func GetUsers(mongoClient *mongo.Client) (users []models.Scraping, err error) {
 
 		users = append(users, models.Scraping{
 			ID: id,
-			ScrapingCredentials: models.ScrapingCredentials{
+			WalletsCredentials: models.WalletsCredentials{
 				CEI: parsers.ParseCEI(data),
 			},
 		})

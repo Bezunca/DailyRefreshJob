@@ -178,7 +178,7 @@ func SendCEIScrapingRequests(rabbitMQ *rabbitmq.Session, userScrapingRequests []
 	for i := 0; i < len(userScrapingRequests); i++ {
 		scrappingRequest := userScrapingRequests[i]
 
-		if scrappingRequest.ScrapingCredentials.CEI != nil {
+		if scrappingRequest.WalletsCredentials.CEI != nil {
 			request, err := json.Marshal(scrappingRequest)
 			if err != nil {
 				return err

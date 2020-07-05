@@ -7,7 +7,7 @@ import (
 )
 
 func ParseBaseScraping(data map[string]interface{}) (map[string]interface{}, bool) {
-	_scrapingCredentials, ok := data["scraping_credentials"]
+	_scrapingCredentials, ok := data["wallets_credentials"]
 	if !ok {
 		return nil, false
 	}
